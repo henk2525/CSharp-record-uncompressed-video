@@ -172,7 +172,8 @@ namespace 情緒攝影
             comboBoxSupportedModes.Text = "";
             foreach (var capability in FinalVideo.VideoCapabilities)
             {
-                comboBoxSupportedModes.Items.Add(capability.FrameSize.ToString() + "," + capability.MaximumFrameRate.ToString() + "fps," + capability.BitCount.ToString()+ "bits");
+                string fourcc = decode_fourcc(capability.compression);
+                comboBoxSupportedModes.Items.Add(capability.FrameSize.ToString() + "," + capability.MaximumFrameRate.ToString() + "fps,"  +  fourcc + " codec");
             }
             FinalVideo.NewFrame += new NewFrameEventHandler(FinalFrame_NewFrame);
         }
@@ -181,8 +182,21 @@ namespace 情緒攝影
         {
             this.label5.Text = StopWatch.Elapsed.ToString();
         }
-
-
+        
+        private string decode_fourcc(int fourcc)
+        {
+            var fourccString = new string
+                (
+                    new[]
+                    {
+                        (char)(fourcc & 0xFF),
+                        (char)((fourcc & 0xFF00) >> 8),
+                        (char)((fourcc & 0xFF0000) >> 16),
+                        (char)((fourcc & 0xFF000000U) >> 24)
+                    }
+                );
+            return fourccString;
+        }
 
         private void Btnsetcamera_Click(object sender, EventArgs e)
         {
